@@ -1,3 +1,3 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Initial release of the (unofficial) Flutter Ogury SDK, currently supports only interstitial ads

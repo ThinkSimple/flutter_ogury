@@ -5,9 +5,10 @@ void main() {
   runApp(MyApp());
 
   /// Initializes the Ogury SDK
+  ///
   FlutterOgury.initialize(
-    assetKeyAndroid: "OGY-48BE01AF311F",
-    assetKeyIOS: "OGY-42589A8E8E42",
+    assetKeyAndroid: "OGY-XXXXXXXXXXXX",
+    assetKeyIOS: "OGY-XXXXXXXXXXXX",
   );
 }
 
@@ -28,18 +29,24 @@ class _MyAppState extends State<MyApp> {
   ///Load the sdk as soon as possible
   void _loadInterstitialAd() {
     FlutterOgury.loadInterstitial(
-      adUnitIdAndroid: "300700_default",
-      adUnitIdIOS: "300745_default",
+      adUnitIdAndroid: "123456_default",
+      adUnitIdIOS: "123456_default",
       enableTestAd: true,
     );
   }
 
-  void _showAdWhenLoaded() async {
+  void _showAd() async {
     bool interstitialIsLoaded = await FlutterOgury.interstitialIsLoaded();
+
     if (interstitialIsLoaded) {
       FlutterOgury.showInterstitial();
-    } else {
     }
+
+    FlutterOgury.loadInterstitial(
+      adUnitIdAndroid: "300700_default",
+      adUnitIdIOS: "300745_default",
+      enableTestAd: true,
+    );
   }
 
   @override
@@ -56,17 +63,13 @@ class _MyAppState extends State<MyApp> {
               RaisedButton(
                   child: Text("Load"),
                   onPressed: () {
-                    FlutterOgury.loadInterstitial(
-                      adUnitIdAndroid: "300700_default",
-                      adUnitIdIOS: "300745_default",
-                      enableTestAd: true,
-                    );
+                    _loadInterstitialAd();
                   }),
               RaisedButton(
                   child: Text("Show"),
                   onPressed: () {
                     //FlutterOgury.showInterstitial();
-                    _showAdWhenLoaded();
+                    _showAd();
                   }),
               RaisedButton(
                   child: Text("isLoaded"),

@@ -16,7 +16,8 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
-  s.dependency 'OguryAds', '1.4.1'
+  #s.dependency 'OguryAds', '1.4.1'
+  s.dependency 'OguryAds', '1.4.6'
   s.dependency 'OguryChoiceManager', '3.1.0'
   s.platform = :ios, '10.0'
 

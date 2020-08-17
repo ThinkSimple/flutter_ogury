@@ -2,11 +2,11 @@ PODS:
   - Flutter (1.0.0)
   - flutter_ogury (0.0.1):
     - Flutter
-    - OguryAds (= 1.4.1)
+    - OguryAds (= 1.4.6)
     - OguryChoiceManager (= 3.1.0)
-  - OguryAds (1.4.1):
-    - OguryAds/OMID (= 1.4.1)
-  - OguryAds/OMID (1.4.1)
+  - OguryAds (1.4.6):
+    - OguryAds/OMID (= 1.4.6)
+  - OguryAds/OMID (1.4.6)
   - OguryChoiceManager (3.1.0)
 
 DEPENDENCIES:
@@ -26,8 +26,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_ogury: 22702e4cf38cf613759ef67c53a74b253166951a
-  OguryAds: 9274d169e20fe29d3cde4bfcaf56904ae9e0b3fb
+  flutter_ogury: 386e03e2635e2d70c11edd57679279d084df072d
+  OguryAds: 21d9535475a15fd3e8ca316ab0b7360de786e7fd
   OguryChoiceManager: b6db93f0e25f1249bdb4d94b6232dfbd29a5ce07
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea

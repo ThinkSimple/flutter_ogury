@@ -1,8 +1,7 @@
 name: flutter_ogury
-description: A new flutter plugin project.
+description: A flutter plugin for the Ogury sdk
 version: 0.0.1
-author:
-homepage:
+homepage: https://github.com/ThinkSimple/flutter_ogury
 
 environment:
   sdk: ">=2.7.0 <3.0.0"

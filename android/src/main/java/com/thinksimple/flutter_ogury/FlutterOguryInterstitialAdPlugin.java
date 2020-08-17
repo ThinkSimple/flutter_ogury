@@ -44,7 +44,6 @@ public class FlutterOguryInterstitialAdPlugin implements MethodChannel.MethodCal
     }
 
     private boolean _initInterstitial(String adUnitId) {
-        Log.d("Moin", "_initInterstitial started");
 
         AdConfig config = new AdConfig(adUnitId);
         interstitial = new PresageInterstitial(this.context, config);
@@ -100,7 +99,6 @@ public class FlutterOguryInterstitialAdPlugin implements MethodChannel.MethodCal
 
 
     private boolean showInterstitial() {
-        Log.d("Ogury", "showInterstitial");
         if (interstitial.isLoaded()) {
             interstitial.show();
         } else {

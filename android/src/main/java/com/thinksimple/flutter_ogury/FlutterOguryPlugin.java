@@ -25,128 +25,108 @@ import io.presage.Presage;
 public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
-  private Activity mActivity;
-  private Context mContext;
-  private FlutterOguryInterstitialAdPlugin interstitialAdPlugin;
+    private Activity mActivity;
+    private Context mContext;
+    private FlutterOguryInterstitialAdPlugin interstitialAdPlugin;
 
-  @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
-    Log.d("Moin", "onAttachedToEngine started");
+        this.mContext = flutterPluginBinding.getApplicationContext();
+        // Main channel for initialization
+        final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(),
+                "flutter_ogury");
+        channel.setMethodCallHandler(this);
 
-    this.mContext = flutterPluginBinding.getApplicationContext();
-    // Main channel for initialization
-    final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(),
-            "flutter_ogury");
-    channel.setMethodCallHandler(this);
-
-    final MethodChannel interstitialAdChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(),
-            "flutter_ogury/interstitialAd");
-    interstitialAdPlugin = new FlutterOguryInterstitialAdPlugin(flutterPluginBinding.getApplicationContext(),
-            interstitialAdChannel,null);
-    interstitialAdChannel
-            .setMethodCallHandler(interstitialAdPlugin);
-  }
-
-  public void registerWith(PluginRegistry.Registrar registrar) {
-    Log.d("Moin", "registerWith started");
-
-    this.mContext = registrar.context();
-    this.mActivity = registrar.activity();
-    // Main channel for initialization
-    final MethodChannel channel = new MethodChannel(registrar.messenger(),
-            "flutter_ogury");
-    channel.setMethodCallHandler(this);
-
-    final MethodChannel interstitialAdChannel = new MethodChannel(registrar.messenger(),
-            "flutter_ogury/interstitialAd");
-    interstitialAdPlugin = new FlutterOguryInterstitialAdPlugin(registrar.context(),
-            interstitialAdChannel,registrar.activity());
-    interstitialAdChannel
-            .setMethodCallHandler(interstitialAdPlugin);
-  }
-
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-
-    Log.d("Moin", "onMethodCall started");
-
-    if (call.method.equals("init")) {
-      init((String) call.arguments);
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else {
-      result.notImplemented();
+        final MethodChannel interstitialAdChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(),
+                "flutter_ogury/interstitialAd");
+        interstitialAdPlugin = new FlutterOguryInterstitialAdPlugin(flutterPluginBinding.getApplicationContext(),
+                interstitialAdChannel, null);
+        interstitialAdChannel
+                .setMethodCallHandler(interstitialAdPlugin);
     }
-  }
 
-  private boolean init(final String assetKey) {
+    public void registerWith(PluginRegistry.Registrar registrar) {
+        this.mContext = registrar.context();
+        this.mActivity = registrar.activity();
+        // Main channel for initialization
+        final MethodChannel channel = new MethodChannel(registrar.messenger(),
+                "flutter_ogury");
+        channel.setMethodCallHandler(this);
 
-    Log.d("Moin", "init started");
+        final MethodChannel interstitialAdChannel = new MethodChannel(registrar.messenger(),
+                "flutter_ogury/interstitialAd");
+        interstitialAdPlugin = new FlutterOguryInterstitialAdPlugin(registrar.context(),
+                interstitialAdChannel, registrar.activity());
+        interstitialAdChannel
+                .setMethodCallHandler(interstitialAdPlugin);
+    }
 
-    OguryChoiceManager.initialize(this.mContext, assetKey, new OguryCmConfig());
+    @Override
+    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
 
-    final OguryConsentListener oguryConsentListener = new OguryConsentListener() {
-      @Override
-      public void onComplete(OguryChoiceManager.Answer answer) {
-        Log.d("Moin", "OguryConsentListener onComplete");
-        startSdks(assetKey);
-      }
+        if (call.method.equals("init")) {
+            result.success(init((String) call.arguments));
+        } else {
+            result.notImplemented();
+        }
+    }
 
-      @Override
-      public void onError(OguryError error) {
-        Log.d("Moin", error.getMessage());
-        Log.d("Moin", "OguryConsentListener onError " + error.toString());
+    private boolean init(final String assetKey) {
 
-        startSdks(assetKey);
-      }
-    };
+        OguryChoiceManager.initialize(this.mContext, assetKey, new OguryCmConfig());
 
-    OguryChoiceManager.ask(this.mActivity, oguryConsentListener);
+        final OguryConsentListener oguryConsentListener = new OguryConsentListener() {
+            @Override
+            public void onComplete(OguryChoiceManager.Answer answer) {
+                startSdks(assetKey);
+            }
 
-    Presage.getInstance().start(assetKey, this.mContext);
+            @Override
+            public void onError(OguryError error) {
+                Log.d("Ogury", "consent error " + error.toString());
+                Log.d("Ogury", error.getMessage());
+                startSdks(assetKey);
+            }
+        };
 
-    return true;
-  }
+        OguryChoiceManager.ask(this.mActivity, oguryConsentListener);
 
-  private void startSdks(String assetKey) {
-    Log.d("Moin", "startSdks");
-    Presage.getInstance().start(assetKey, this.mContext);
-    // start vendors' SDKs
-  }
+        Presage.getInstance().start(assetKey, this.mContext);
 
-  @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    Log.d("Moin", "onDetachedFromEngine started");
+        return true;
+    }
 
-    //channel.setMethodCallHandler(null);
-  }
+    private void startSdks(String assetKey) {
+        Presage.getInstance().start(assetKey, this.mContext);
+    }
 
-  @Override
-  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    Log.d("Moin", "onAttachedToActivity started");
-    Log.d("Moin", binding.getActivity().toString());
-    this.mActivity = binding.getActivity();
-    //interstitialAdPlugin.setActivity(this.mActivity);
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
 
-  }
+    }
 
-  @Override
-  public void onDetachedFromActivityForConfigChanges() {
-    Log.d("Moin", "onDetachedFromActivityForConfigChanges started");
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        this.mActivity = binding.getActivity();
+        //interstitialAdPlugin.setActivity(this.mActivity);
 
-  }
+    }
 
-  @Override
-  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-    Log.d("Moin", "onReattachedToActivityForConfigChanges started");
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
 
+    }
 
-  }
-
-  @Override
-  public void onDetachedFromActivity() {
-    Log.d("Moin", "onDetachedFromActivity started");
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
 
 
-  }
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+
+
+    }
 }

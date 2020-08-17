@@ -8,6 +8,7 @@ public class FlutterOguryInterstitialAdPlugin: NSObject, OguryAdsInterstitialDel
     
     let channel: FlutterMethodChannel
     var interstitial: OguryAdsInterstitial?
+    var interstitialLoaded: Bool = false
     
     init(channel: FlutterMethodChannel) {
         self.channel = channel
@@ -17,15 +18,12 @@ public class FlutterOguryInterstitialAdPlugin: NSObject, OguryAdsInterstitialDel
         channel.setMethodCallHandler { (call, result) in
             switch call.method {
             case "load_interstitial":
-                print("load interstitial called")
                 result(self.loadAd(call))
                 break;
             case "show_interstitial":
-                print("show interstitial called")
                 result(self.showAd())
                 break;
             case "interstitial_is_loaded":
-                print("interstitialIsLoaded called")
                 result(self.interstitialIsLoaded())
                 break;
             default:
@@ -39,14 +37,13 @@ public class FlutterOguryInterstitialAdPlugin: NSObject, OguryAdsInterstitialDel
         let adUnit: String = call.arguments as! String
         self.interstitial = OguryAdsInterstitial.init(adUnitID: adUnit)
         
-        interstitial!.interstitialDelegate = self
+        self.interstitial!.interstitialDelegate = self
         self.interstitial!.load()
         return true
     }
     
     public func showAd() -> Bool {
         if ((self.interstitial?.isLoaded) != nil){
-            print("interstitial shown")
             self.interstitial?.show(in: (UIApplication.shared.keyWindow?.rootViewController)!)
         } else {
             print(self.interstitial.debugDescription)
@@ -57,48 +54,50 @@ public class FlutterOguryInterstitialAdPlugin: NSObject, OguryAdsInterstitialDel
     }
     
     public func interstitialIsLoaded() -> Bool {
-        print("isLoaded:")
-        print(self.interstitial?.isLoaded)
-        return self.interstitial?.isLoaded ?? false
+        /*
+         //currently interstitial.isLoaded is not really working 
+         print("isLoaded:")
+         print(self.interstitial?.isLoaded)
+         return self.interstitial?.isLoaded ?? false
+         */
+        return interstitialLoaded
     }
     
     public func oguryAdsInterstitialAdAvailable() {
-        print("oguryAdsInterstitialAdAvailable")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdAvailable",arguments: nil)
         
     }
     
     public func oguryAdsInterstitialAdNotAvailable() {
-        print("oguryAdsInterstitialAdNotAvailable")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdNotAvailable",arguments: nil)
     }
     
     public func oguryAdsInterstitialAdLoaded() {
-        print("oguryAdsInterstitialAdLoaded")
+        interstitialLoaded = true
         self.channel.invokeMethod("InterstitialAdResult.AdLoaded",arguments: nil)
     }
     
     public func oguryAdsInterstitialAdNotLoaded() {
-        print("oguryAdsInterstitialAdNotLoaded")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdNotLoaded",arguments: nil)
         
     }
     
     public func oguryAdsInterstitialAdDisplayed() {
-        print("oguryAdsInterstitialAdDisplayed")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdDisplayed",arguments: nil)
         
     }
     
     public func oguryAdsInterstitialAdClosed() {
-        print("oguryAdsInterstitialAdClosed")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdClosed",arguments: nil)
-        self.interstitial?.isLoaded.toggle()
-        print(self.interstitial?.isLoaded)
     }
     
     public func oguryAdsInterstitialAdError(_ errorType: OguryAdsErrorType) {
-        print("oguryAdsInterstitialAdError")
+        interstitialLoaded = false
         self.channel.invokeMethod("InterstitialAdResult.AdError",arguments: "InterstitialAdResult.AdError")
         
     }
