@@ -25,14 +25,14 @@ import io.presage.Presage;
 public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
-    private Activity mActivity;
-    private Context mContext;
-    private FlutterOguryInterstitialAdPlugin interstitialAdPlugin;
+    private static Activity mActivity;
+    private static Context mContext;
+    private static FlutterOguryInterstitialAdPlugin interstitialAdPlugin;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
 
-        this.mContext = flutterPluginBinding.getApplicationContext();
+        mContext = flutterPluginBinding.getApplicationContext();
         // Main channel for initialization
         final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(),
                 "flutter_ogury");
@@ -46,13 +46,13 @@ public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, Act
                 .setMethodCallHandler(interstitialAdPlugin);
     }
 
-    public void registerWith(PluginRegistry.Registrar registrar) {
-        this.mContext = registrar.context();
-        this.mActivity = registrar.activity();
+    public static void registerWith(PluginRegistry.Registrar registrar) {
+        mContext = registrar.context();
+        mActivity = registrar.activity();
         // Main channel for initialization
         final MethodChannel channel = new MethodChannel(registrar.messenger(),
                 "flutter_ogury");
-        channel.setMethodCallHandler(this);
+        channel.setMethodCallHandler(new FlutterOguryPlugin());
 
         final MethodChannel interstitialAdChannel = new MethodChannel(registrar.messenger(),
                 "flutter_ogury/interstitialAd");
@@ -74,7 +74,7 @@ public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, Act
 
     private boolean init(final String assetKey) {
 
-        OguryChoiceManager.initialize(this.mContext, assetKey, new OguryCmConfig());
+        OguryChoiceManager.initialize(mContext, assetKey, new OguryCmConfig());
 
         final OguryConsentListener oguryConsentListener = new OguryConsentListener() {
             @Override
@@ -90,15 +90,15 @@ public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, Act
             }
         };
 
-        OguryChoiceManager.ask(this.mActivity, oguryConsentListener);
+        OguryChoiceManager.ask(mActivity, oguryConsentListener);
 
-        Presage.getInstance().start(assetKey, this.mContext);
+        Presage.getInstance().start(assetKey, mContext);
 
         return true;
     }
 
     private void startSdks(String assetKey) {
-        Presage.getInstance().start(assetKey, this.mContext);
+        Presage.getInstance().start(assetKey, mContext);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class FlutterOguryPlugin implements FlutterPlugin, MethodCallHandler, Act
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        this.mActivity = binding.getActivity();
+        mActivity = binding.getActivity();
         //interstitialAdPlugin.setActivity(this.mActivity);
 
     }

@@ -27,7 +27,7 @@ flutter_ogury: ^0.1.1
 
 ## Usage
 
-Initialise the Ogury SDK preferably inside the **main.dart**.
+Initialise the Ogury SDK preferably inside **main.dart**.
 ```dart
 /// Initialises the Ogury SDK
   FlutterOgury.initialize(

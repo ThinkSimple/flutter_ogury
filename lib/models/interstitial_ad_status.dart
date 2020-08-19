@@ -1,4 +1,4 @@
-enum InterstitialAdStatus{
+enum InterstitialAdStatus {
   AdAvailable,
   AdNotAvailable,
   AdLoaded,

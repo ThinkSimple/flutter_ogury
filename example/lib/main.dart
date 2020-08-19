@@ -5,10 +5,9 @@ void main() {
   runApp(MyApp());
 
   /// Initializes the Ogury SDK
-  ///
   FlutterOgury.initialize(
-    assetKeyAndroid: "OGY-XXXXXXXXXXXX",
-    assetKeyIOS: "OGY-XXXXXXXXXXXX",
+    assetKeyAndroid: "OGY-48BE01AF311F",
+    assetKeyIOS: "OGY-42589A8E8E42",
   );
 }
 
@@ -29,8 +28,8 @@ class _MyAppState extends State<MyApp> {
   ///Load the sdk as soon as possible
   void _loadInterstitialAd() {
     FlutterOgury.loadInterstitial(
-      adUnitIdAndroid: "123456_default",
-      adUnitIdIOS: "123456_default",
+      adUnitIdAndroid: "300700_default",
+      adUnitIdIOS: "300745_default",
       enableTestAd: true,
     );
   }
@@ -85,3 +84,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
